@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% from "macros.html" import capa, menu_admin %}
+
+{% block titulo %}Painel do admin – Moonrise{% endblock %}
+
+{% block corpo %}
+<h1 class="titulo-pagina">Painel do admin</h1>
+{{ menu_admin("painel") }}
+
+<div class="numeros-grade">
+  <div class="numero"><strong>{{ numeros.obras|br }}</strong><span>obras</span></div>
+  <div class="numero"><strong>{{ numeros.capitulos|br }}</strong><span>capítulos</span></div>
+  <div class="numero"><strong>{{ numeros.usuarios|br }}</strong><span>contas</span></div>
+  <div class="numero"><strong>{{ numeros.leituras|br }}</strong><span>leituras na semana</span></div>
+</div>
+
+<div class="secao-topo">
+  <h2 class="secao-titulo">Obras</h2>
+  <a class="botao primario pequeno" href="/admin/obra/nova">Nova obra</a>
+</div>
+
+{% for obra in obras %}
+<div class="linha">
+  <div class="linha-capa">{{ capa(obra) }}</div>
+  <div class="linha-texto">
+    <strong>{{ obra.titulo }}</strong>
+    <span>{{ obra.total_caps }} {{ "capítulo" if obra.total_caps == 1 else "capítulos" }} e {{ obra.views|br }} {{ "leitura" if obra.views == 1 else "leituras" }}</span>
+    <span class="etiquetas">
+      <span class="etiqueta neutra">{{ obra.status }}</span>
+      {% if obra.destaque %}<span class="etiqueta">No carrossel</span>{% endif %}
+    </span>
+  </div>
+  <div class="linha-acoes">
+    <a class="botao contorno pequeno" href="/admin/obra/{{ obra.id }}">Capítulos</a>
+    <a class="botao contorno pequeno" href="/admin/obra/{{ obra.id }}/editar">Editar</a>
+  </div>
+</div>
+{% else %}
+<div class="vazio">
+  <p>Nenhuma obra ainda. Comece criando a primeira.</p>
+  <a class="botao primario" href="/admin/obra/nova">Nova obra</a>
+</div>
+{% endfor %}
+{% endblock %}

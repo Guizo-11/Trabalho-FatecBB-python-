@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block titulo %}Minha conta – Moonrise{% endblock %}
+
+{% block corpo %}
+<h1 class="titulo-pagina">Minha conta</h1>
+
+<section class="perfil">
+  <span class="avatar grande">{{ g.usuario.nome[0]|upper }}</span>
+  <div class="perfil-texto">
+    <strong>{{ g.usuario.nome }}{% if g.usuario.admin %} <span class="etiqueta">Administrador</span>{% endif %}</strong>
+    <span>{{ g.usuario.email }}</span>
+    <span>Lendo na Moonrise desde {{ g.usuario.criado_em|data }}</span>
+  </div>
+</section>
+
+<div class="numeros-grade tres">
+  <div class="numero"><strong>{{ resumo.capitulos|br }}</strong><span>capítulos lidos</span></div>
+  <div class="numero"><strong>{{ resumo.favoritos|br }}</strong><span>favoritos</span></div>
+  <div class="numero"><strong>{{ resumo.notas|br }}</strong><span>notas dadas</span></div>
+</div>
+
+<section class="caixa">
+  <h2>Trocar senha</h2>
+  <form class="formulario" method="post">
+    <label>Senha atual
+      <input type="password" name="atual" required autocomplete="current-password">
+    </label>
+    <label>Nova senha
+      <input type="password" name="nova" required minlength="6" autocomplete="new-password">
+    </label>
+    <label>Confirmar nova senha
+      <input type="password" name="confirmar" required minlength="6" autocomplete="new-password">
+    </label>
+    <button class="botao primario">Salvar nova senha</button>
+  </form>
+</section>
+
+<a class="botao contorno" href="/sair">Sair da conta</a>
+{% endblock %}

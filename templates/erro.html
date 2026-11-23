@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+
+{% block titulo %}{{ titulo }} – Moonrise{% endblock %}
+
+{% block corpo %}
+<section class="boas-vindas">
+  <img src="/static/lua.png" alt="" width="120" height="71">
+  <h1>{{ titulo }}</h1>
+  <p>{{ mensagem }}</p>
+  <a class="botao primario" href="/">Voltar ao início</a>
+</section>
+{% endblock %}

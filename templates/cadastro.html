@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block titulo %}Criar conta – Moonrise{% endblock %}
+
+{% block corpo %}
+<section class="cartao-conta">
+  <img class="cartao-logo" src="/static/lua.png" alt="" width="96" height="57">
+  <h1>Criar conta</h1>
+  {% if primeira_conta %}
+  <p class="destaque-conta">Esta é a primeira conta do site, então ela será a de administrador.</p>
+  {% endif %}
+  <form class="formulario" method="post">
+    <label>Nome de usuário
+      <input name="nome" value="{{ nome }}" required minlength="3" maxlength="20" autocomplete="username" autocapitalize="none">
+      <small>De 3 a 20 letras ou números, sem espaço.</small>
+    </label>
+    <label>E-mail
+      <input type="email" name="email" value="{{ email }}" required autocomplete="email">
+    </label>
+    <label>Senha
+      <input type="password" name="senha" required minlength="6" autocomplete="new-password">
+      <small>Pelo menos 6 caracteres.</small>
+    </label>
+    <label>Confirmar senha
+      <input type="password" name="confirmar" required minlength="6" autocomplete="new-password">
+    </label>
+    <button class="botao primario largo">Criar conta</button>
+  </form>
+  <p class="troca">Já tem conta? <a href="/entrar">Entrar</a></p>
+</section>
+{% endblock %}

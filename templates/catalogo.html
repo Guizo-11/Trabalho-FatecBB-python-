@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% from "macros.html" import icone, card %}
+
+{% block titulo %}Catálogo – Moonrise{% endblock %}
+
+{% block corpo %}
+<h1 class="titulo-pagina">Catálogo</h1>
+
+<form class="busca-catalogo" action="/catalogo">
+  <input type="search" name="q" value="{{ busca }}" placeholder="Título, autor ou gênero" aria-label="Pesquisar no catálogo">
+  <input type="hidden" name="tipo" value="{{ tipo }}">
+  <input type="hidden" name="ordem" value="{{ ordem }}">
+  <button class="botao primario" aria-label="Buscar">{{ icone("busca") }}</button>
+</form>
+
+<nav class="filtros" aria-label="Filtrar por tipo">
+  <a href="?q={{ busca|urlencode }}&ordem={{ ordem }}" class="{{ 'ativo' if not tipo }}">Todos</a>
+  {% for t in tipos %}
+  <a href="?q={{ busca|urlencode }}&tipo={{ t|urlencode }}&ordem={{ ordem }}" class="{{ 'ativo' if t == tipo }}">{{ t }}</a>
+  {% endfor %}
+</nav>
+
+<nav class="filtros ordem" aria-label="Ordenar">
+  <span>Ordem</span>
+  {% for chave, opcao in ordens.items() %}
+  <a href="?q={{ busca|urlencode }}&tipo={{ tipo|urlencode }}&ordem={{ chave }}" class="{{ 'ativo' if chave == ordem }}">{{ opcao[0] }}</a>
+  {% endfor %}
+</nav>
+
+<p class="contagem">
+  {{ obras|length }} {{ "obra" if obras|length == 1 else "obras" }}{% if busca %} para “{{ busca }}”{% endif %}
+</p>
+
+{% if obras %}
+<div class="grade">
+  {% for obra in obras %}{{ card(obra) }}{% endfor %}
+</div>
+{% else %}
+<div class="vazio">
+  <p>Nenhuma obra encontrada. Tente outro título, autor ou gênero.</p>
+  <a class="botao contorno" href="/catalogo">Ver todas as obras</a>
+</div>
+{% endif %}
+{% endblock %}

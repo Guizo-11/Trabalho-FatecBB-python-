@@ -1,0 +1,99 @@
+{% extends "base.html" %}
+{% from "macros.html" import icone, capa, card, topo_secao %}
+
+{% block corpo %}
+
+{% if destaques %}
+{# Carrossel de destaques (o script.js faz ele passar sozinho) #}
+<section class="vitrine" aria-label="Obras em destaque">
+  <div class="slides">
+    {% for obra in destaques %}
+    <article class="slide"{% if obra.capa %} style="--fundo: url('/static/{{ obra.capa }}')"{% endif %}>
+      <a class="slide-capa" href="/obra/{{ obra.id }}" tabindex="-1">{{ capa(obra) }}</a>
+      <div class="slide-texto">
+        <h2><a href="/obra/{{ obra.id }}">{{ obra.titulo }}</a></h2>
+        <p class="meta">
+          <strong>{{ obra.tipo }}</strong>
+          <span>{{ obra.status }}</span>
+          {% if obra.nota %}<span class="nota">★ {{ obra.nota|br }}</span>{% endif %}
+          <span>{{ icone("olho") }} {{ obra.views|br }}</span>
+        </p>
+      </div>
+      <p class="slide-sinopse">{{ obra.descricao or "Sinopse em breve." }}</p>
+      <div class="slide-botoes">
+        {% if obra.primeiro_cap_id %}
+        <a class="botao primario" href="/ler/{{ obra.primeiro_cap_id }}">{{ icone("play") }} Ler agora</a>
+        {% endif %}
+        <a class="botao contorno" href="/obra/{{ obra.id }}">Detalhes</a>
+      </div>
+    </article>
+    {% endfor %}
+  </div>
+
+  {% if destaques|length > 1 %}
+  <div class="vitrine-controles">
+    <button class="seta" type="button" data-ir="-1" aria-label="Destaque anterior">{{ icone("esquerda") }}</button>
+    <div class="pontos">
+      {% for obra in destaques %}
+      <button class="ponto{% if loop.first %} ativo{% endif %}" type="button" aria-label="Mostrar {{ obra.titulo }}"></button>
+      {% endfor %}
+    </div>
+    <button class="seta" type="button" data-ir="1" aria-label="Próximo destaque">{{ icone("direita") }}</button>
+  </div>
+  {% endif %}
+</section>
+
+{% else %}
+{# Ainda não tem nenhuma obra publicada #}
+<section class="boas-vindas">
+  <img src="/static/lua.png" alt="" width="150" height="89">
+  <h1>A estante ainda está vazia</h1>
+  {% if g.usuario and g.usuario.admin %}
+    <p>Publique a primeira obra pelo painel do admin.</p>
+    <a class="botao primario" href="/admin/obra/nova">Publicar obra</a>
+  {% elif sem_contas %}
+    <p>Crie a primeira conta. Ela vira a conta de administrador e pode publicar obras.</p>
+    <a class="botao primario" href="/cadastro">Criar conta</a>
+  {% else %}
+    <p>As obras aparecem aqui assim que forem publicadas.</p>
+  {% endif %}
+</section>
+{% endif %}
+
+{% if continuar %}
+<section class="secao">
+  {{ topo_secao("Continuar lendo", "De onde você parou", "/biblioteca") }}
+  <div class="trilho">
+    {% for obra in continuar %}{{ card(obra, "Parou no cap. " ~ (obra.cap_numero|cap), "/ler/" ~ obra.cap_id) }}{% endfor %}
+  </div>
+</section>
+{% endif %}
+
+{% if mais_lidas %}
+<section class="secao">
+  {{ topo_secao("Mais lidas", "Nos últimos 7 dias", "/catalogo?ordem=populares") }}
+  <div class="trilho">
+    {% for obra in mais_lidas %}{{ card(obra) }}{% endfor %}
+  </div>
+</section>
+{% endif %}
+
+{% if novidades %}
+<section class="secao">
+  {{ topo_secao("Capítulos novos", "Obras atualizadas há pouco", "/catalogo?ordem=recentes") }}
+  <div class="trilho">
+    {% for obra in novidades %}{{ card(obra) }}{% endfor %}
+  </div>
+</section>
+{% endif %}
+
+{% if todas %}
+<section class="secao">
+  {{ topo_secao("Catálogo", "Todas as obras, de A a Z", "/catalogo?ordem=az") }}
+  <div class="grade">
+    {% for obra in todas %}{{ card(obra) }}{% endfor %}
+  </div>
+</section>
+{% endif %}
+
+{% endblock %}

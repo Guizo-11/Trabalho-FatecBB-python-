@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% from "macros.html" import menu_admin %}
+
+{% block titulo %}Usuários – Moonrise{% endblock %}
+
+{% block corpo %}
+<h1 class="titulo-pagina">Usuários</h1>
+{{ menu_admin("usuarios") }}
+
+{% for u in usuarios %}
+<div class="linha">
+  <span class="avatar">{{ u.nome[0]|upper }}</span>
+  <div class="linha-texto">
+    <strong>{{ u.nome }}</strong>
+    <span>{{ u.email }}</span>
+    <span>Desde {{ u.criado_em|data }}, {{ u.lidos }} {{ "capítulo lido" if u.lidos == 1 else "capítulos lidos" }}</span>
+    <span class="etiquetas">
+      {% if u.admin %}<span class="etiqueta">Administrador</span>{% else %}<span class="etiqueta neutra">Leitor</span>{% endif %}
+      {% if u.id == g.usuario.id %}<span class="etiqueta rosa">Você</span>{% endif %}
+    </span>
+  </div>
+  {% if u.id != g.usuario.id %}
+  <div class="linha-acoes">
+    <form method="post" action="/admin/usuario/{{ u.id }}/{{ 'rebaixar' if u.admin else 'promover' }}">
+      <button class="botao contorno pequeno">{{ "Remover admin" if u.admin else "Tornar admin" }}</button>
+    </form>
+    <form method="post" action="/admin/usuario/{{ u.id }}/excluir"
+          onsubmit="return confirm('Excluir esta conta? Os favoritos e as notas dela serão apagados.')">
+      <button class="botao perigo pequeno">Excluir</button>
+    </form>
+  </div>
+  {% endif %}
+</div>
+{% endfor %}
+{% endblock %}

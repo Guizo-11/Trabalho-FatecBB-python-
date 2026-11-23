@@ -1,0 +1,82 @@
+{% from "macros.html" import icone -%}
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#080B15">
+  <title>{% block titulo %}Moonrise{% endblock %}</title>
+  <link rel="icon" href="/static/lua.png">
+  <link rel="stylesheet" href="/static/estilo.css">
+</head>
+<body class="{% block classe_body %}{% endblock %}">
+
+{% block cabecalho %}
+<header class="topo">
+  <div class="topo-dentro">
+    <a class="marca" href="/" aria-label="Moonrise, página inicial">
+      <img src="/static/lua.png" alt="" width="46" height="27">
+      <span>MOON<b>RISE</b></span>
+    </a>
+
+    <nav class="acoes">
+      <details class="gaveta">
+        <summary class="botao-icone" aria-label="Pesquisar">{{ icone("busca") }}</summary>
+        <form class="painel painel-busca" action="/catalogo">
+          <input type="search" name="q" placeholder="Título, autor ou gênero" aria-label="Pesquisar obras">
+          <button class="botao primario">Buscar</button>
+        </form>
+      </details>
+
+      {% if g.usuario %}
+        <a class="avatar" href="/biblioteca" aria-label="Minha biblioteca">{{ g.usuario.nome[0]|upper }}</a>
+      {% else %}
+        <a class="botao-icone sem-borda" href="/entrar" aria-label="Entrar">{{ icone("usuario") }}</a>
+      {% endif %}
+
+      <details class="gaveta">
+        <summary class="botao-icone" aria-label="Menu">{{ icone("menu") }}</summary>
+        <div class="painel painel-menu">
+          <a href="/">Início</a>
+          <a href="/catalogo">Catálogo</a>
+          <span class="separador"></span>
+          {% if g.usuario %}
+            <a href="/biblioteca">Minha biblioteca</a>
+            <a href="/conta">Minha conta</a>
+            {% if g.usuario.admin %}<a href="/admin">Painel do admin</a>{% endif %}
+            <a href="/sair">Sair</a>
+          {% else %}
+            <a href="/entrar">Entrar</a>
+            <a href="/cadastro">Criar conta</a>
+          {% endif %}
+        </div>
+      </details>
+    </nav>
+  </div>
+</header>
+{% endblock %}
+
+{# Mensagens rápidas (flash): "Obra salva.", "Senha incorreta." etc. #}
+{% with mensagens = get_flashed_messages(with_categories=true) %}
+  {% if mensagens %}
+  <div class="avisos" role="status">
+    {% for categoria, texto in mensagens %}<p class="aviso {{ categoria }}">{{ texto }}</p>{% endfor %}
+  </div>
+  {% endif %}
+{% endwith %}
+
+<main class="{% block classe_main %}conteudo{% endblock %}">
+{% block corpo %}{% endblock %}
+</main>
+
+{% block rodape %}
+<footer class="rodape">
+  <img src="/static/logo.png" alt="Moonrise Scans" width="88" height="88">
+  <p>Mangás, manhwas e webtoons para ler de noite.</p>
+  <p class="suave">Feito com Python, Flask e SQLite.</p>
+</footer>
+{% endblock %}
+
+<script src="/static/script.js"></script>
+</body>
+</html>

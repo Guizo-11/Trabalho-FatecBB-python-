@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% from "macros.html" import icone %}
+
+{% block titulo %}Cap. {{ cap.numero|cap }} – {{ obra.titulo }}{% endblock %}
+{% block classe_body %}modo-leitura{% endblock %}
+
+{# No leitor o cabeçalho é uma barra simples, para sobrar espaço para as páginas #}
+{% block cabecalho %}
+<header class="barra-leitura">
+  <a class="botao-icone" href="/obra/{{ obra.id }}" aria-label="Voltar para a obra">{{ icone("esquerda") }}</a>
+  <div class="barra-titulo">
+    <strong>{{ obra.titulo }}</strong>
+    <span>Capítulo {{ cap.numero|cap }}{% if cap.titulo %}: {{ cap.titulo }}{% endif %}</span>
+  </div>
+  <select class="escolher-cap" aria-label="Escolher capítulo" onchange="location.href = this.value">
+    {% for c in capitulos %}
+    <option value="/ler/{{ c.id }}"{% if c.id == cap.id %} selected{% endif %}>Cap. {{ c.numero|cap }}</option>
+    {% endfor %}
+  </select>
+</header>
+{% endblock %}
+
+{% block classe_main %}leitor{% endblock %}
+
+{% block corpo %}
+<div class="paginas">
+  {% for p in paginas %}
+  <img src="/static/{{ p.arquivo }}" alt="Página {{ p.numero }}" loading="{{ 'eager' if loop.index <= 2 else 'lazy' }}">
+  {% else %}
+  <p class="vazio">Este capítulo ainda não tem páginas.</p>
+  {% endfor %}
+</div>
+
+<nav class="navegar-caps" aria-label="Navegar entre capítulos">
+  {% if anterior %}
+  <a class="botao contorno" href="/ler/{{ anterior.id }}">{{ icone("esquerda") }} Anterior</a>
+  {% else %}<span></span>{% endif %}
+  <a class="botao contorno" href="/obra/{{ obra.id }}">{{ icone("lista") }} Capítulos</a>
+  {% if proximo %}
+  <a class="botao primario" href="/ler/{{ proximo.id }}">Próximo {{ icone("direita") }}</a>
+  {% else %}<span class="fim">Último capítulo</span>{% endif %}
+</nav>
+{% endblock %}
+
+{% block rodape %}{% endblock %}

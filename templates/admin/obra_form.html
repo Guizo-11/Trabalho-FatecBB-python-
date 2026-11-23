@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% from "macros.html" import capa, menu_admin %}
+
+{% block titulo %}{{ "Editar obra" if editando else "Nova obra" }} – Moonrise{% endblock %}
+
+{% block corpo %}
+<h1 class="titulo-pagina">{{ "Editar obra" if editando else "Nova obra" }}</h1>
+{{ menu_admin("" if editando else "nova") }}
+
+<form class="caixa formulario" method="post" enctype="multipart/form-data">
+  <label>Título
+    <input name="titulo" value="{{ obra.titulo or '' }}" required>
+  </label>
+  <label>Autor
+    <input name="autor" value="{{ obra.autor or '' }}">
+  </label>
+
+  <div class="duas-colunas">
+    <label>Tipo
+      <select name="tipo">
+        {% for t in tipos %}<option{% if obra.tipo == t %} selected{% endif %}>{{ t }}</option>{% endfor %}
+      </select>
+    </label>
+    <label>Situação
+      <select name="status">
+        {% for s in situacoes %}<option{% if obra.status == s %} selected{% endif %}>{{ s }}</option>{% endfor %}
+      </select>
+    </label>
+  </div>
+
+  <label>Gêneros
+    <input name="generos" value="{{ obra.generos or '' }}" placeholder="Romance, Escolar, Comédia">
+    <small>Separe com vírgula. Eles viram botões de busca na página da obra.</small>
+  </label>
+  <label>Sinopse
+    <textarea name="descricao" rows="5">{{ obra.descricao or '' }}</textarea>
+  </label>
+
+  <div class="campo-capa">
+    {% if editando %}<div class="linha-capa">{{ capa(obra) }}</div>{% endif %}
+    <label>{{ "Trocar capa" if editando and obra.capa else "Capa" }}
+      <input type="file" name="capa" accept="image/*">
+      <small>Imagem em pé, de preferência na proporção 2 por 3.</small>
+    </label>
+  </div>
+
+  <label class="check">
+    <input type="checkbox" name="destaque"{% if obra.destaque %} checked{% endif %}>
+    Mostrar no carrossel da página inicial
+  </label>
+
+  <div class="botoes-form">
+    <button class="botao primario">{{ "Salvar obra" if editando else "Criar obra" }}</button>
+    <a class="botao contorno" href="{{ '/admin/obra/' ~ obra.id if editando else '/admin' }}">Cancelar</a>
+  </div>
+</form>
+{% endblock %}

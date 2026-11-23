@@ -1,0 +1,61 @@
+{# Moldes reutilizáveis (macros). Para usar: {% from "macros.html" import card %} #}
+
+{# Ícones desenhados em SVG: {{ icone("busca") }} #}
+{% macro icone(nome) -%}
+<svg class="icone" viewBox="0 0 24 24" aria-hidden="true">
+{%- if nome == "busca" %}<circle cx="11" cy="11" r="7"/><path d="M20 20l-3.6-3.6"/>
+{%- elif nome == "usuario" %}<circle cx="12" cy="8" r="4"/><path d="M4 21c.6-4.2 3.9-6.5 8-6.5s7.4 2.3 8 6.5"/>
+{%- elif nome == "menu" %}<path d="M4 6.5h16M4 12h16M4 17.5h16"/>
+{%- elif nome == "play" %}<path class="cheio" d="M8 5.2v13.6L18.8 12z"/>
+{%- elif nome == "coracao" %}<path d="M12 20.2s-7.6-4.6-7.6-10.4A4.2 4.2 0 0 1 12 7.4a4.2 4.2 0 0 1 7.6 2.4c0 5.8-7.6 10.4-7.6 10.4z"/>
+{%- elif nome == "esquerda" %}<path d="M14.5 5.5L8 12l6.5 6.5"/>
+{%- elif nome == "direita" %}<path d="M9.5 5.5L16 12l-6.5 6.5"/>
+{%- elif nome == "olho" %}<path d="M2.5 12S6 5.8 12 5.8 21.5 12 21.5 12 18 18.2 12 18.2 2.5 12 2.5 12z"/><circle cx="12" cy="12" r="2.8"/>
+{%- elif nome == "lista" %}<path d="M9 6.5h11M9 12h11M9 17.5h11M4.5 6.5h.01M4.5 12h.01M4.5 17.5h.01"/>
+{%- endif %}
+</svg>
+{%- endmacro %}
+
+{# Capa da obra, ou a lua no lugar quando ainda não tem capa #}
+{% macro capa(obra) -%}
+{% if obra.capa -%}
+<img src="/static/{{ obra.capa }}" alt="Capa de {{ obra.titulo }}" loading="lazy">
+{%- else -%}
+<div class="capa-vazia"><img src="/static/lua.png" alt=""><span>{{ obra.titulo }}</span></div>
+{%- endif %}
+{%- endmacro %}
+
+{# Cartão de obra usado nas listas e trilhos #}
+{% macro card(obra, info="", link="") -%}
+<a class="card" href="{{ link or '/obra/' ~ obra.id }}">
+  <div class="card-capa">
+    {{ capa(obra) }}
+    <span class="selo"><i>◆</i> {{ obra.tipo }}</span>
+    {% if obra.nota %}<span class="selo selo-nota"><i>★</i> {{ obra.nota|br }}</span>{% endif %}
+  </div>
+  <strong class="card-titulo">{{ obra.titulo }}</strong>
+  <span class="card-info">
+    {%- if info %}{{ info }}{% elif obra.ultimo_cap %}Cap. {{ obra.ultimo_cap|cap }}{% else %}Sem capítulos ainda{% endif -%}
+  </span>
+</a>
+{%- endmacro %}
+
+{# Título de seção, com o botão "Ver mais" opcional #}
+{% macro topo_secao(titulo, subtitulo="", link="") -%}
+<div class="secao-topo">
+  <div>
+    <h2 class="secao-titulo">{{ titulo }}</h2>
+    {% if subtitulo %}<p class="secao-sub">{{ subtitulo }}</p>{% endif %}
+  </div>
+  {% if link %}<a class="botao contorno pequeno" href="{{ link }}">Ver mais</a>{% endif %}
+</div>
+{%- endmacro %}
+
+{# Menu das páginas do admin #}
+{% macro menu_admin(ativo="") -%}
+<nav class="admin-nav" aria-label="Admin">
+  <a href="/admin" class="{{ 'ativo' if ativo == 'painel' }}">Painel</a>
+  <a href="/admin/obra/nova" class="{{ 'ativo' if ativo == 'nova' }}">Nova obra</a>
+  <a href="/admin/usuarios" class="{{ 'ativo' if ativo == 'usuarios' }}">Usuários</a>
+</nav>
+{%- endmacro %}

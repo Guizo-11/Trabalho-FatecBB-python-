@@ -1,0 +1,6 @@
+# banco de dados e imagens enviadas ficam só no seu aparelho
+moonrise.db
+biblioteca.db
+static/uploads/
+static/imagens/
+__pycache__/

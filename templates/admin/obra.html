@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+{% from "macros.html" import capa, menu_admin %}
+
+{% block titulo %}{{ obra.titulo }} (admin) – Moonrise{% endblock %}
+
+{% block corpo %}
+{{ menu_admin() }}
+
+<section class="admin-obra">
+  <div class="linha-capa grande">{{ capa(obra) }}</div>
+  <div>
+    <h1 class="titulo-pagina">{{ obra.titulo }}</h1>
+    <p class="suave">{{ obra.total_caps }} {{ "capítulo" if obra.total_caps == 1 else "capítulos" }} e {{ obra.views|br }} {{ "leitura" if obra.views == 1 else "leituras" }}</p>
+    <div class="linha-acoes esquerda">
+      <a class="botao contorno pequeno" href="/obra/{{ obra.id }}">Ver como leitor</a>
+      <a class="botao contorno pequeno" href="/admin/obra/{{ obra.id }}/editar">Editar dados</a>
+    </div>
+  </div>
+</section>
+
+<section class="caixa">
+  <h2>Publicar capítulo</h2>
+  <form class="formulario" method="post" enctype="multipart/form-data">
+    <div class="duas-colunas">
+      <label>Número
+        <input name="numero" inputmode="decimal" value="{{ proximo_numero }}" required>
+      </label>
+      <label>Título (opcional)
+        <input name="titulo" placeholder="Ex.: O primeiro encontro">
+      </label>
+    </div>
+    <label>Páginas
+      <input type="file" name="paginas" accept="image/*" multiple required>
+      <small>Selecione todas as imagens de uma vez. A ordem segue o nome dos arquivos: 1.jpg, 2.jpg … 10.jpg.</small>
+    </label>
+    <button class="botao primario">Publicar capítulo</button>
+  </form>
+</section>
+
+<section class="secao primeira">
+  <div class="secao-topo">
+    <h2 class="secao-titulo">Capítulos</h2>
+    <span class="contador">{{ capitulos|length }}</span>
+  </div>
+  {% for c in capitulos %}
+  <div class="linha">
+    <div class="linha-texto">
+      <strong>Capítulo {{ c.numero|cap }}{% if c.titulo %}: {{ c.titulo }}{% endif %}</strong>
+      <span>{{ c.paginas }} páginas, publicado em {{ c.criado_em|data }}</span>
+    </div>
+    <div class="linha-acoes">
+      <a class="botao contorno pequeno" href="/ler/{{ c.id }}">Ler</a>
+      <form method="post" action="/admin/capitulo/{{ c.id }}/excluir"
+            onsubmit="return confirm('Excluir este capítulo? As imagens dele também serão apagadas.')">
+        <button class="botao perigo pequeno">Excluir</button>
+      </form>
+    </div>
+  </div>
+  {% else %}
+  <p class="vazio">Nenhum capítulo ainda. Publique o primeiro no formulário acima.</p>
+  {% endfor %}
+</section>
+
+<section class="zona-perigo">
+  <h2>Excluir obra</h2>
+  <p>Apaga a obra com todos os capítulos, imagens, notas e favoritos. Não dá para desfazer.</p>
+  <form method="post" action="/admin/obra/{{ obra.id }}/excluir"
+        onsubmit="return confirm('Excluir esta obra e tudo que é dela?')">
+    <button class="botao perigo">Excluir obra</button>
+  </form>
+</section>
+{% endblock %}

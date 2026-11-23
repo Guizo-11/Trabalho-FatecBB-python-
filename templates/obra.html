@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+{% from "macros.html" import icone, capa %}
+
+{% block titulo %}{{ obra.titulo }} – Moonrise{% endblock %}
+
+{% block corpo %}
+<section class="obra-topo"{% if obra.capa %} style="--fundo: url('/static/{{ obra.capa }}')"{% endif %}>
+  <div class="obra-capa">{{ capa(obra) }}</div>
+
+  <div class="obra-dados">
+    <h1>{{ obra.titulo }}</h1>
+    {% if obra.autor %}<p class="obra-autor">{{ obra.autor }}</p>{% endif %}
+    <p class="meta"><strong>{{ obra.tipo }}</strong><span>{{ obra.status }}</span></p>
+    <p class="numeros">
+      <span class="nota">★ {{ obra.nota|br }}{% if obra.total_notas %} <small>({{ obra.total_notas }})</small>{% endif %}</span>
+      <span>{{ icone("olho") }} {{ obra.views|br }}</span>
+      <span>{{ icone("coracao") }} {{ obra.favoritos|br }}</span>
+    </p>
+  </div>
+
+  {% if generos %}
+  <ul class="generos">
+    {% for genero in generos %}<li><a href="/catalogo?q={{ genero|urlencode }}">{{ genero }}</a></li>{% endfor %}
+  </ul>
+  {% endif %}
+
+  <p class="obra-sinopse">{{ obra.descricao or "Sinopse em breve." }}</p>
+
+  <div class="obra-botoes">
+    {% if ultimo_lido %}
+      <a class="botao primario" href="/ler/{{ ultimo_lido.id }}">{{ icone("play") }} Continuar do cap. {{ ultimo_lido.numero|cap }}</a>
+    {% elif obra.primeiro_cap_id %}
+      <a class="botao primario" href="/ler/{{ obra.primeiro_cap_id }}">{{ icone("play") }} Ler do início</a>
+    {% else %}
+      <span class="botao desativado">Sem capítulos ainda</span>
+    {% endif %}
+
+    {% if g.usuario %}
+    <form method="post" action="/obra/{{ obra.id }}/favoritar">
+      <button class="botao contorno{% if favorito %} favoritado{% endif %}">
+        {{ icone("coracao") }} {{ "Nos favoritos" if favorito else "Favoritar" }}
+      </button>
+    </form>
+    {% else %}
+    <a class="botao contorno" href="/entrar?voltar=/obra/{{ obra.id }}">{{ icone("coracao") }} Favoritar</a>
+    {% endif %}
+  </div>
+
+  {% if g.usuario %}
+  <form class="avaliar" method="post" action="/obra/{{ obra.id }}/avaliar">
+    <label for="nota">Sua nota</label>
+    <select id="nota" name="nota">
+      {% for n in range(10, 0, -1) %}<option value="{{ n }}"{% if minha_nota == n %} selected{% endif %}>{{ n }}</option>{% endfor %}
+    </select>
+    <button class="botao contorno pequeno">{{ "Mudar nota" if minha_nota else "Avaliar" }}</button>
+  </form>
+  {% else %}
+  <p class="dica"><a href="/entrar?voltar=/obra/{{ obra.id }}">Entre</a> para favoritar, dar nota e continuar de onde parou.</p>
+  {% endif %}
+
+  {% if g.usuario and g.usuario.admin %}
+  <a class="link-admin" href="/admin/obra/{{ obra.id }}">Gerenciar esta obra</a>
+  {% endif %}
+</section>
+
+<section class="capitulos">
+  <div class="secao-topo">
+    <h2 class="secao-titulo">Capítulos</h2>
+    <span class="contador">{{ capitulos|length }}</span>
+  </div>
+  {% for c in capitulos %}
+  <a class="capitulo{% if c.id in lidos %} lido{% endif %}" href="/ler/{{ c.id }}">
+    <span class="capitulo-numero">Capítulo {{ c.numero|cap }}</span>
+    {% if c.titulo %}<span class="capitulo-nome">{{ c.titulo }}</span>{% endif %}
+    <span class="capitulo-data">{{ "Lido" if c.id in lidos else c.criado_em|data }}</span>
+  </a>
+  {% else %}
+  <p class="vazio">Os capítulos aparecem aqui assim que forem publicados.</p>
+  {% endfor %}
+</section>
+{% endblock %}

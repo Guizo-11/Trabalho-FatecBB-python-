@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% from "macros.html" import card, topo_secao %}
+
+{% block titulo %}Minha biblioteca – Moonrise{% endblock %}
+
+{% block corpo %}
+<h1 class="titulo-pagina">Minha biblioteca</h1>
+
+<section class="secao primeira">
+  {{ topo_secao("Continuar lendo", "O último capítulo que você abriu em cada obra") }}
+  {% if continuar %}
+  <div class="grade">
+    {% for obra in continuar %}{{ card(obra, "Parou no cap. " ~ (obra.cap_numero|cap), "/ler/" ~ obra.cap_id) }}{% endfor %}
+  </div>
+  {% else %}
+  <div class="vazio">
+    <p>Os capítulos que você abrir aparecem aqui, para continuar depois.</p>
+    <a class="botao contorno" href="/catalogo">Explorar o catálogo</a>
+  </div>
+  {% endif %}
+</section>
+
+<section class="secao">
+  {{ topo_secao("Favoritos", "Obras que você marcou com o coração") }}
+  {% if favoritos %}
+  <div class="grade">
+    {% for obra in favoritos %}{{ card(obra) }}{% endfor %}
+  </div>
+  {% else %}
+  <div class="vazio"><p>Toque em Favoritar na página de uma obra para guardar ela aqui.</p></div>
+  {% endif %}
+</section>
+{% endblock %}
