@@ -28,7 +28,7 @@ from werkzeug.security import generate_password_hash, check_password_hash  # vem
 
 #configurações
 app = Flask(__name__)
-app.secret_key = "troque-esta-chave-por-qualquer-texto"   # a sessão do login usa isso (trocar depois)
+app.secret_key = "Oabe32_563u2bggg"   # a sessão do login usa isso
 app.config["MAX_CONTENT_LENGTH"] = 200 * 1024 * 1024       # limite de 200 MB por upload
 
 PASTA = os.path.dirname(os.path.abspath(__file__))          # pasta onde esse arquivo tá
